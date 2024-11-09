@@ -69,9 +69,30 @@ def accept_cookie(page, stats_crawler, url, crawl_type):
     accept_words = []
     with open("../utils/accept_words.txt", 'r', encoding="utf-8") as file:
         accept_words = [line.strip() for line in file if line.strip()]
+    accept_classes = [
+        "iubenda-cs-accept-btn",  
+        "btn-accept",  
+        "accept",  
+    ]
     found_accept_button = False
     def search_and_click_in_frame(frame):
         nonlocal found_accept_button
+
+        for class_name in accept_classes:
+            accept_button = frame.query_selector(f'.{class_name}')
+            if accept_button and accept_button.is_visible():
+                found_accept_button_or_link = True
+                try:
+                    accept_button.click()
+                    frame.wait_for_timeout(1000)
+                    # Fallback to JavaScript click if standard click fails
+                    if accept_button.is_visible():
+                        frame.evaluate("button => button.click()", accept_button)
+                        frame.wait_for_timeout(1000)
+                except Exception as e:
+                    log.debug(f"Click failed on button with class '{class_name}': {e}")
+                return True
+
         for word in accept_words:
             accept_button = frame.query_selector(f'button:has-text("{word}")')
             if accept_button and accept_button.is_visible():
