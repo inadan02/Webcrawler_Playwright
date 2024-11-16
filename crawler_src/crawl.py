@@ -57,7 +57,7 @@ def parse_arguments():
 def ensure_http_prefix(url):
     # Ensure URL has the https:// prefix
     if not url.startswith("http://") and not url.startswith("https://"):
-        return "https://" + url
+        return "https://www." + url
     return url
 
 def read_lines_of_file(file_path, crawl_type):
@@ -170,7 +170,7 @@ def scroll_to_bottom_in_multiple_steps(page):
 import time  # Import time to use sleep
 
 def crawler(playwright, url, stats_crawler, url_index, crawl_type):
-    browser = playwright.chromium.launch(headless=True, slow_mo=50)
+    browser = playwright.chromium.launch(headless=False, slow_mo=50)
     url_domain = get_fld(url)
     output_dir = f"../crawl_data_{crawl_type}"
     os.makedirs(output_dir, exist_ok=True)
